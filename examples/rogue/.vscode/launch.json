@@ -1,0 +1,57 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    //   {
+    //     "name": "Debug GBA",
+    //     "type": "cppdbg",
+    //     "request": "launch",
+    //     "program": "${workspaceFolder}/rogue.elf",
+    //     "args": [],
+    //     "cwd": "${workspaceFolder}",
+    //     "preLaunchTask": "run mGBA",  // Add a task to launch mGBA before debugging
+    //     "stopAtEntry": false,
+    //     "windows": {
+    //       "miDebuggerPath": "C:\\Program Files\\mGBA\\mGBA.exe",
+    //       "args": [
+    //         "-g", // GDB Server
+    //         "${workspaceFolder}/rogue.gba"
+    //       ],
+    //       "cwd": "${workspaceFolder}"
+    //     },
+    //     "MIMode": "gdb" // GDB protocol
+    //   }
+    {
+        "name": "(gdb) Launch",
+        "type": "cppdbg",
+        "request": "launch",
+        "preLaunchTask": "gdb-debug", 
+        "postDebugTask": "stop emulation",
+        "serverLaunchTimeout": 10000,
+        "stopAtEntry": true,
+        "program": "${workspaceFolder}/${workspaceFolderBasename}.elf",
+        "MIMode": "gdb",
+        "externalConsole": true,
+        "cwd": "${workspaceFolder}",
+        "targetArchitecture": "arm",
+        "miDebuggerServerAddress": "localhost:2345",
+        "windows": {
+            "miDebuggerPath": "C:/devkitPro/devkitARM/bin/arm-none-eabi-gdb.exe",
+            "setupCommands": [
+                {
+                "description": "Enable pretty-printing for gdb",
+                "ignoreFailures": true,
+                    "text": "file ${workspaceFolder}/${workspaceFolderBasename}.elf -enable-pretty-printing"
+                }]
+        },
+        "osx":{
+            "miDebuggerPath": "/opt/devkitPro/devkitARM/bin/arm-none-eabi-gdb",
+            "setupCommands": [
+                {
+                "description": "Enable pretty-printing for gdb",
+                "ignoreFailures": true,
+                    "text": "file ${workspaceFolder}/${workspaceFolderBasename}.elf -enable-pretty-printing"
+                }]
+        },
+    }
+    ]
+  }
