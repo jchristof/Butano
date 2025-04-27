@@ -34,6 +34,25 @@
 
 #define BN_CFG_LOG_ENABLED
 
+constexpr uint8_t sewerMap [16*16] = {
+    41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,
+    41,2,2,2,2,2,2,2,2,2,2,2,2,2,2,41,
+    41,2,1,1,1,1,1,1,1,1,1,1,1,1,2,41,
+    41,2,1,3,3,3,3,3,1,3,3,3,3,1,2,41,
+    41,2,1,80,3,3,3,3,3,3,3,3,3,1,2,41,
+    41,2,1,80,80,80,80,80,80,80,3,3,3,1,2,41,
+    41,2,1,80,80,80,80,80,80,80,80,80,3,1,2,41,
+    41,2,1,56,56,56,80,80,80,4,4,80,80,1,2,41,
+    41,2,1,56,56,56,80,80,80,4,4,4,4,1,2,41,
+    41,2,1,56,56,56,56,80,80,4,4,4,4,1,2,41,
+    41,2,1,56,56,56,56,56,80,4,4,4,4,1,2,41,
+    41,2,1,56,56,56,56,56,56,56,56,56,56,1,2,41,
+    41,2,1,1,1,1,1,1,1,1,1,1,13,1,2,41,
+    41,2,1,1,1,1,1,1,1,1,1,1,1,1,2,41,
+    41,2,2,2,2,2,2,2,2,2,2,2,2,2,2,41,
+    41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41
+};
+
 // constexpr bn::color palette1_colors[16] = {
 //     bn::color(0, 0, 0),     // Transparent/Black (often unused index 0)
 //     bn::colors::red,
@@ -83,28 +102,67 @@ bn::regular_bg_map_cell map1_cells[map1_width * map1_height] = {
 
 //constexpr bn::regular_bg_tiles_item tileset1_item(tileset1_tiles, bn::bpp_mode::BPP_4);
 
+int tileForMetaMapCell(int metaTileNumber, int subTileIndex)
+{
+    // Example logic to determine tile index based on cell and sub-tile index
+    // This is a placeholder; actual logic will depend on your map design
+    int x = metaTileNumber % 20;
+    int y = metaTileNumber / 20;
+
+    int baseTileIndex = (y * 40 * 2) + (x *2); // Base index for the tile
+    if (subTileIndex == 1) {
+        return ++baseTileIndex;
+    } else if (subTileIndex == 2) {
+        return baseTileIndex + 40; // Checkerboard tile
+    } else if (subTileIndex == 3) {
+        return baseTileIndex + 41;
+    } 
+
+    return baseTileIndex;
+}
+
 int main(){
     bn::core::init();
     //bn::bg_palette_ptr bg_palette_0 = palette1_item.create_palette();
     //bn::regular_bg_tiles_ptr bg_tiles_0 = tileset1_item.create_tiles();
     
 
-    bn::vector<bn::regular_bg_map_cell, map1_width * map1_height> map1_cells_dynamic;
+    //bn::vector<bn::regular_bg_map_cell, map1_width * map1_height> map1_cells_dynamic;
     //constexpr int pal_id_0 = 0; // Palette ID for layer 0
-    for(int y = 0; y < map1_height; ++y) {
-        for(int x = 0; x < map1_width; ++x) {
-            int tile_index = 0;
-            if (y == 0 || y == map1_height - 1 || x == 0 || x == map1_width - 1) {
-                tile_index = 1; // Border tile (Solid Red)
-            } else if ((x + y) % 2 == 0) {
-                 tile_index = 2; // Checkerboard tile
-            } else {
-                 tile_index = 3; // Lines tile
-            }
-            // Create map cell linking tile index and palette id
-            map1_cells[y*map1_width + x]=(bn::regular_bg_map_cell((x*y)%640));
+
+    constexpr int sewer_map_width = 16;
+    constexpr int sewer_map_height = 16;
+    constexpr int sewer_map_cell_count = sewer_map_width * sewer_map_height;
+     
+    for(int i = 0; i < sewer_map_cell_count; ++i) {
+        uint8_t metaTileNumber = sewerMap[i];
+        uint8_t mapCellX = i % sewer_map_width;
+        uint8_t mapCellY = i / sewer_map_height; 
+
+        for(int j = 0; j < 4; ++j) {
+            uint8_t subTileX = mapCellX * 2 + (j % 2);
+            uint8_t subTileY = mapCellY * 2 + (j / 2);
+            map1_cells[subTileX + (subTileY*32)] = tileForMetaMapCell(metaTileNumber, j);
         }
+
+       // map1_cells[i] = bn::regular_bg_map_cell(0); // Initialize with transparent tile (index 0)
     }
+
+    // for(int y = 0; y < map1_height; ++y) {
+    //     for(int x = 0; x < map1_width; ++x) {
+    //         int tile_index = 0;
+    //         if (y == 0 || y == map1_height - 1 || x == 0 || x == map1_width - 1) {
+    //             tile_index = 1; // Border tile (Solid Red)
+    //         } else if ((x + y) % 2 == 0) {
+    //              tile_index = 2; // Checkerboard tile
+    //         } else {
+    //              tile_index = 3; // Lines tile
+    //         }
+            
+
+    //         map1_cells[y*map1_width + x]= 2;//(bn::regular_bg_map_cell((x*y)%640));
+    //     }
+    // }
 
     bn::regular_bg_map_item map1_item(map1_cells[0], bn::size(map1_width, map1_height));
     //bn::regular_bg_map_ptr bg_map_0 = map1_item.create_map(bg_tiles_0, bg_palette_0);
@@ -129,8 +187,8 @@ int main(){
     while(1)
     {
         // Update the screen
-        bn::core::update();
-        palette_cycler.update(); // Update the palette cycling
+            bn::core::update();
+       // palette_cycler.update(); // Update the palette cycling
     }
 }
 

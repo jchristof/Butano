@@ -38,19 +38,9 @@ public:
         BN_ASSERT(delay_frames >= 1, "PaletteCycler: delay_frames must be at least 1");
         BN_ASSERT(_original_cycle_colors.size() == 16, "PaletteCycler: _original_cycle_colors size is less than count");
 
-        // --- Store Original Colors and Setup Temp Buffer using bn::array ---
-
-        // Get the current colors from the palette pointer
-        bn::span<const bn::color> current_colors = _palette.colors();
-
-        // Copy the *entire* current palette state to our temp buffer array
+        // Store the original colors in the cycling range
         for(int i = 0; i < palette_colors_count; ++i) {
-             // Using .at() provides bounds checking during debug builds
-             _temp_palette_colors.at(i) = current_colors[i]; // Use operator[] for span access
-        }
-        // Optional: Zero out any remaining slots in the fixed-size array (if palette size < 16)
-        for(int i = palette_colors_count; i < 16; ++i) {
-            _temp_palette_colors.at(i) = bn::color(0);
+             _temp_palette_colors.at(i) = _palette.colors().at(i);
         }
 
         // Store only the original colors from the specific range we will cycle
