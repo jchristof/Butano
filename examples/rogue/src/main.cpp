@@ -24,6 +24,10 @@
 #include "bn_regular_bg_tiles_items_sewers_16.h"
 
 #include "bn_sprite_items_warrior3.h"
+#include "bn_sprite_actions.h"
+#include "bn_sprite_builder.h"
+#include "bn_sprites_actions.h"
+#include "bn_sprite_animate_actions.h"
 
 #include "common_info.h"
 #include "common_variable_8x16_sprite_font.h"
@@ -57,37 +61,6 @@ constexpr int map1_width = 32;
 constexpr int map1_height = 32;
 bn::regular_bg_map_cell map1_cells[map1_width * map1_height];
 
-namespace
-{
-    void camera_scene(bn::camera_ptr &camera)
-    {
-        while (!bn::keypad::start_pressed())
-        {
-            if (bn::keypad::left_held())
-            {
-                camera.set_x(camera.x() - 1);
-            }
-            else if (bn::keypad::right_held())
-            {
-                camera.set_x(camera.x() + 1);
-            }
-
-            if (bn::keypad::up_held())
-            {
-                camera.set_y(camera.y() - 1);
-            }
-            else if (bn::keypad::down_held())
-            {
-                camera.set_y(camera.y() + 1);
-            }
-
-            bn::core::update();
-        }
-
-        camera.set_position(0, 0);
-    }
-
-}
 
 int tileForMetaMapCell(int metaTileNumber, int subTileIndex)
 {
@@ -112,7 +85,7 @@ int tileForMetaMapCell(int metaTileNumber, int subTileIndex)
 }
 
 int main()
-{
+    {
     bn::core::init();
 
     constexpr int sewer_map_width = 16;
@@ -141,13 +114,16 @@ int main()
                                         map1_item)        // Link map to specific tiles/palette
                                         .create_bg(0, 0); // Place BG at screen origin (0,0)
 
-    // Set properties (optional, but good practice)
     bg_layer_0.set_priority(3); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
     bg_layer_0.set_visible(true);
 
-    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(-60, 0);
+    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(0,0);
+    bn::sprite_animate_action<7> action = bn::create_sprite_animate_action_forever(
+        warrior_sprite, 16, bn::sprite_items::warrior3.tiles_item(), 0, 1, 2, 3, 4, 5, 6);
 
-    bn::camera_ptr camera = bn::camera_ptr::create(0, 0);
+    warrior_sprite.set_horizontal_flip(true); // Flip the sprite horizontally
+
+    bn::camera_ptr camera = bn::camera_ptr::create(8, 8);
     bg_layer_0.set_camera(camera); // Link camera to the background
 
     PaletteCycler palette_cycler(
@@ -158,8 +134,27 @@ int main()
 
     while (1)
     {
+        action.update();
         bn::core::update();
-        camera_scene(camera);
-        palette_cycler.update(); // Update the palette cycling
+        if (bn::keypad::left_pressed())
+        {
+            camera.set_x(camera.x() - 16);
+            warrior_sprite.set_horizontal_flip(true);
+        }
+        else if (bn::keypad::right_pressed())
+        {
+            camera.set_x(camera.x() + 16);
+            warrior_sprite.set_horizontal_flip(false);
+        }
+
+        if (bn::keypad::up_pressed())
+        {
+            camera.set_y(camera.y() - 16);
+        }
+        else if (bn::keypad::down_pressed())
+        {
+            camera.set_y(camera.y() + 16);
+        }
+        // palette_cycler.update(); // Update the palette cycling
     }
 }
