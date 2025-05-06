@@ -20,8 +20,9 @@
 #include "bn_sprite_items_dino.h"
 #include "bn_regular_bg_items_land.h"
 #include "bn_regular_bg_items_clouds.h"
-#include "bn_regular_bg_items_sewers.h"
+// #include "bn_regular_bg_items_sewers.h"
 #include "bn_regular_bg_tiles_items_sewers_16.h"
+#include "bn_regular_bg_tiles_items_water0.h"
 
 #include "bn_sprite_items_warrior3.h"
 #include "bn_sprite_actions.h"
@@ -37,100 +38,139 @@
 
 #include "palette_cycler.h"
 
-#define BN_CFG_LOG_ENABLED
+// #define BN_CFG_LOG_ENABLED
 
 constexpr uint8_t sewerMap[16 * 16] = {
-    41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-    41, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 41,
-    41, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 41,
-    41, 2, 1, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 2, 41,
-    41, 2, 1, 80, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 2, 41,
-    41, 2, 1, 80, 80, 80, 80, 80, 80, 80, 3, 3, 3, 1, 2, 41,
-    41, 2, 1, 80, 80, 80, 80, 80, 80, 80, 80, 80, 3, 1, 2, 41,
-    41, 2, 1, 56, 56, 56, 80, 80, 80, 4, 4, 80, 80, 1, 2, 41,
-    41, 2, 1, 56, 56, 56, 80, 80, 80, 4, 4, 4, 4, 1, 2, 41,
-    41, 2, 1, 56, 56, 56, 56, 80, 80, 4, 4, 4, 4, 1, 2, 41,
-    41, 2, 1, 56, 56, 56, 56, 56, 80, 4, 4, 4, 4, 1, 2, 41,
-    41, 2, 1, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 1, 2, 41,
-    41, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 13, 1, 2, 41,
-    41, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 41,
-    41, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 41,
-    41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41};
+    86,1,93,0,0,0,0,0,0,0,0,0,0,0,0,0,
+86,73,58,58,58,58,93,0,0,0,0,0,0,0,0,0,
+86,1,1,1,1,1,62,0,0,0,0,0,0,0,0,0,
+86,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,
+86,1,12,1,1,1,93,0,0,0,0,0,0,0,0,0,
+85,1,1,1,1,1,90,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-constexpr int map1_width = 32;
-constexpr int map1_height = 32;
-bn::regular_bg_map_cell map1_cells[map1_width * map1_height];
+constexpr uint8_t water[16 * 16] = {
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4,
+    1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+    3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4};
 
+constexpr int native_tile_width = 32;
+constexpr int native_tile_height = 32;
+constexpr int sewer_map_width = 16;
+constexpr int sewer_map_height = 16;
 
-int tileForMetaMapCell(int metaTileNumber, int subTileIndex)
+bn::regular_bg_map_cell water_cells_water[native_tile_width * native_tile_height];
+constexpr int sewer_tilesheet_width = 20;
+
+int tileForMetaMapCell(int metaTileNumber, int subTileIndex, int tileSheetWidth)
 {
-    int x = metaTileNumber % 20;
-    int y = metaTileNumber / 20;
+    int x = metaTileNumber % tileSheetWidth;
+    int y = metaTileNumber / tileSheetWidth;
 
-    int baseTileIndex = (y * 40 * 2) + (x * 2); // Base index for the tile
+    int nativeTileSheetWidth = tileSheetWidth * 2;
+
+    int baseTileIndex = (y * nativeTileSheetWidth * 2) + (x * 2); // Base index for the tile
     if (subTileIndex == 1)
     {
         return ++baseTileIndex;
     }
     else if (subTileIndex == 2)
     {
-        return baseTileIndex + 40; // Checkerboard tile
+        return baseTileIndex + nativeTileSheetWidth; // Checkerboard tile
     }
     else if (subTileIndex == 3)
     {
-        return baseTileIndex + 41;
+        return baseTileIndex + nativeTileSheetWidth + 1;
     }
 
     return baseTileIndex;
 }
 
-int main()
+void loadTilesFromMetaMap(int metaMapWidth, int metaMapHeight, int nativeTileSheetWidth, uint16_t* tile_cell_map, const uint8_t* meta_tile_map){
+    for (int i = 0; i < metaMapWidth * metaMapHeight; ++i)
     {
-    bn::core::init();
-
-    constexpr int sewer_map_width = 16;
-    constexpr int sewer_map_height = 16;
-    constexpr int sewer_map_cell_count = sewer_map_width * sewer_map_height;
-
-    for (int i = 0; i < sewer_map_cell_count; ++i)
-    {
-        uint8_t metaTileNumber = sewerMap[i];
-        uint8_t mapCellX = i % sewer_map_width;
-        uint8_t mapCellY = i / sewer_map_height;
+        uint8_t metaTileNumber = meta_tile_map[i];
+        uint8_t mapCellX = i % metaMapWidth;
+        uint8_t mapCellY = i / metaMapHeight;
 
         for (int j = 0; j < 4; ++j)
         {
             uint8_t subTileX = mapCellX * 2 + (j % 2);
             uint8_t subTileY = mapCellY * 2 + (j / 2);
-            map1_cells[subTileX + (subTileY * 32)] = tileForMetaMapCell(metaTileNumber, j);
+            tile_cell_map[subTileX + (subTileY * 32)] = tileForMetaMapCell(metaTileNumber, j, nativeTileSheetWidth);
         }
     }
+}
 
-    bn::regular_bg_map_item map1_item(map1_cells[0], bn::size(map1_width, map1_height));
+int main()
+{
+    bn::core::init();
+
+    bn::regular_bg_map_cell sewers_cells[native_tile_width * native_tile_height];
+    loadTilesFromMetaMap(sewer_map_width, sewer_map_height, sewer_tilesheet_width, sewers_cells, sewerMap);
+    bn::regular_bg_map_item sewer_tile_cells(sewers_cells[0], bn::size(native_tile_width, native_tile_height));
 
     bn::regular_bg_ptr bg_layer_0 = bn::regular_bg_item(
                                         bn::regular_bg_tiles_items::sewers_16, // Use optional creation from item
                                         bn::regular_bg_tiles_items::sewers_16_palette,
-                                        map1_item)        // Link map to specific tiles/palette
+                                        sewer_tile_cells)        // Link map to specific tiles/palette
                                         .create_bg(0, 0); // Place BG at screen origin (0,0)
 
-    bg_layer_0.set_priority(3); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
+    bg_layer_0.set_priority(2); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
     bg_layer_0.set_visible(true);
 
-    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(0,0);
+
+    bn::regular_bg_map_cell water_cells[native_tile_width * native_tile_height];
+    loadTilesFromMetaMap(sewer_map_width, sewer_map_height, 5, water_cells, water);
+    bn::regular_bg_map_item water_tile_cells(water_cells[0], bn::size(native_tile_width, native_tile_height));
+
+    bn::regular_bg_ptr bg_layer_1 = bn::regular_bg_item(
+                                        bn::regular_bg_tiles_items::water0, // Use optional creation from item
+                                        bn::regular_bg_tiles_items::water0_palette,
+                                        water_tile_cells)        // Link map to specific tiles/palette
+                                        .create_bg(0, 0); // Place BG at screen origin (0,0)
+
+    bg_layer_1.set_priority(3); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
+    bg_layer_1.set_visible(true);    
+
+    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(0, 0);
     bn::sprite_animate_action<7> action = bn::create_sprite_animate_action_forever(
         warrior_sprite, 16, bn::sprite_items::warrior3.tiles_item(), 0, 1, 2, 3, 4, 5, 6);
 
     warrior_sprite.set_horizontal_flip(true); // Flip the sprite horizontally
+    warrior_sprite.set_bg_priority(2);        // Set sprite priority to be drawn above the background
 
     bn::camera_ptr camera = bn::camera_ptr::create(8, 8);
-    bg_layer_0.set_camera(camera); // Link camera to the background
+    bg_layer_0.set_camera(camera);
+    bg_layer_1.set_camera(camera); // Link camera to the background
 
     PaletteCycler palette_cycler(
-        bg_layer_0.palette(), // Create palette from item
-        0,                    // Start index for cycling (0-15)
-        16,                   // Number of colors to cycle (1-16)
-        5);                   // Delay frames between cycles
+        bg_layer_1.palette(), // Create palette from item
+        2,                    // Start index for cycling (0-15)
+        2,                   // Number of colors to cycle (1-16)
+        15);                   // Delay frames between cycles
 
     while (1)
     {
@@ -155,6 +195,8 @@ int main()
         {
             camera.set_y(camera.y() + 16);
         }
-        // palette_cycler.update(); // Update the palette cycling
+        
+        bg_layer_1.set_top_left_y(bg_layer_1.top_left_y() + .01); // Move the water layer down
+        palette_cycler.update(); // Update the palette cycling
     }
 }

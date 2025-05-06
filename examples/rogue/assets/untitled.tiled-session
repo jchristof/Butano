@@ -7,50 +7,50 @@
     "expandedProjectPaths": [
         "."
     ],
-    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "sewers.tmx": {
-            "expandedGroupLayers": [
-                2
-            ],
-            "scale": 5.5,
-            "selectedLayer": 0,
+            "scale": 7.190312499999999,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 80.00000000000001,
-                "y": 79.9090909090909
+                "x": 79.9687078969099,
+                "y": 80.03824590377678
             }
         },
         "sewers2.tmx": {
-            "scale": 2,
+            "scale": 4.4939453125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 128,
-                "y": 127.75
+                "x": 127.94993263505583,
+                "y": 128.06119344604284
             }
         },
         "sewers3.tsx": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
-        },
-        "sewers_16-Sheet-export.tsx": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInDock": 3,
+            "scaleInEditor": 4
         },
         "sewers_16.tsx": {
             "scaleInDock": 3,
-            "scaleInEditor": 8
+            "scaleInEditor": 5.5
         },
-        "untitled.tmx": {
-            "scale": 4,
+        "untitled..tmx": {
+            "scale": 4.4939453125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 134,
-                "y": 124.625
+                "x": 127.94993263505583,
+                "y": 128.06119344604284
+            }
+        },
+        "untitled.tmx": {
+            "scale": 4.4939453125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 127.94993263505583,
+                "y": 85.78208527098091
             }
         }
     },
     "last.exportedFilePath": "C:/Projects/butano/examples/rogue/assets",
-    "last.imagePath": "C:/Projects/butano/examples/rogue/assets",
+    "last.imagePath": "C:/Projects/butano/examples/rogue/graphics",
     "map.height": 16,
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "map.lastUsedFormat": "tmx",
@@ -58,24 +58,21 @@
     "map.tileWidth": 16,
     "map.width": 16,
     "openFiles": [
-        "sewers.tmx",
-        "sewers2.tmx",
+        "sewers3.tsx",
+        "untitled.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "untitled..tmx",
+        "sewers3.tsx",
         "untitled.tmx",
         "sewers_16.tsx"
-    ],
-    "project": "Rogue.tiled-project",
-    "recentFiles": [
-        "sewers.tmx",
-        "sewers2.tmx",
-        "sewers_16.tsx",
-        "untitled.tmx",
-        "sewers3.tsx",
-        "sewers_16-Sheet-export.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 16,
         "width": 16
     },
+    "tileset.transparentColor": "#ebf4f3",
     "tileset.useTransparentColor": true
 }
