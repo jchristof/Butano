@@ -36,27 +36,50 @@
 #include "bn_log_backend.h"
 #include "bn_config_log.h"
 
+#include "bn_array.h"
+#include "bn_vector.h"
+#include "bn_span.h"
+
 #include "palette_cycler.h"
 
 // #define BN_CFG_LOG_ENABLED
 
 constexpr uint8_t sewerMap[16 * 16] = {
     86,1,93,0,0,0,0,0,0,0,0,0,0,0,0,0,
-86,73,58,58,58,58,93,0,0,0,0,0,0,0,0,0,
-86,1,1,1,1,1,62,0,0,0,0,0,0,0,0,0,
-86,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,
-86,1,12,1,1,1,93,0,0,0,0,0,0,0,0,0,
-85,1,1,1,1,1,90,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    86,73,58,58,58,58,93,0,0,0,0,0,0,0,0,0,
+    86,1,1,1,1,1,62,65,67,67,58,58,0,0,0,0,
+    86,1,1,1,1,1,1,30,0,0,28,1,0,0,0,0,
+    86,1,12,1,1,1,93,34,0,24,1,1,0,0,0,0,
+    85,1,1,1,1,1,90,1,30,0,25,1,0,0,0,0,
+    0,0,0,0,0,0,0,37,34,26,28,1,0,0,0,0,
+    0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+constexpr uint8_t sewerTopMap[16 * 16] = {
+    0,128,0,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    0,72,0,0,0,0,0,18,18,18,18,18,18,18,18,18,
+    0,0,0,0,0,0,131,0,0,0,0,0,93,18,18,18,
+    0,0,0,0,0,0,119,0,0,0,0,0,93,18,18,18,
+    0,0,0,0,0,0,89,0,0,0,0,0,93,18,18,18,
+    0,104,104,104,104,104,92,0,0,0,0,0,93,18,18,18,
+    18,18,18,18,18,18,86,0,0,0,0,0,93,18,18,18,
+    18,18,18,18,18,18,85,104,104,104,104,104,90,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
+};
 
 constexpr uint8_t water[16 * 16] = {
     1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
@@ -108,7 +131,8 @@ int tileForMetaMapCell(int metaTileNumber, int subTileIndex, int tileSheetWidth)
     return baseTileIndex;
 }
 
-void loadTilesFromMetaMap(int metaMapWidth, int metaMapHeight, int nativeTileSheetWidth, uint16_t* tile_cell_map, const uint8_t* meta_tile_map){
+void loadTilesFromMetaMap(int metaMapWidth, int metaMapHeight, int nativeTileSheetWidth, uint16_t *tile_cell_map, const uint8_t *meta_tile_map)
+{
     for (int i = 0; i < metaMapWidth * metaMapHeight; ++i)
     {
         uint8_t metaTileNumber = meta_tile_map[i];
@@ -135,12 +159,11 @@ int main()
     bn::regular_bg_ptr bg_layer_0 = bn::regular_bg_item(
                                         bn::regular_bg_tiles_items::sewers_16, // Use optional creation from item
                                         bn::regular_bg_tiles_items::sewers_16_palette,
-                                        sewer_tile_cells)        // Link map to specific tiles/palette
+                                        sewer_tile_cells) // Link map to specific tiles/palette
                                         .create_bg(0, 0); // Place BG at screen origin (0,0)
 
     bg_layer_0.set_priority(2); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
     bg_layer_0.set_visible(true);
-
 
     bn::regular_bg_map_cell water_cells[native_tile_width * native_tile_height];
     loadTilesFromMetaMap(sewer_map_width, sewer_map_height, 5, water_cells, water);
@@ -149,54 +172,78 @@ int main()
     bn::regular_bg_ptr bg_layer_1 = bn::regular_bg_item(
                                         bn::regular_bg_tiles_items::water0, // Use optional creation from item
                                         bn::regular_bg_tiles_items::water0_palette,
-                                        water_tile_cells)        // Link map to specific tiles/palette
+                                        water_tile_cells) // Link map to specific tiles/palette
                                         .create_bg(0, 0); // Place BG at screen origin (0,0)
 
     bg_layer_1.set_priority(3); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
-    bg_layer_1.set_visible(true);    
+    bg_layer_1.set_visible(true);
 
-    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(0, 0);
-    bn::sprite_animate_action<7> action = bn::create_sprite_animate_action_forever(
-        warrior_sprite, 16, bn::sprite_items::warrior3.tiles_item(), 0, 1, 2, 3, 4, 5, 6);
+    //
+    bn::regular_bg_map_cell top_cells[native_tile_width * native_tile_height];
+    loadTilesFromMetaMap(sewer_map_width, sewer_map_height, sewer_tilesheet_width, top_cells, sewerTopMap);
+    bn::regular_bg_map_item top_tile_cells(top_cells[0], bn::size(native_tile_width, native_tile_height));
+
+    bn::regular_bg_ptr bg_layer_2 = bn::regular_bg_item(
+        bn::regular_bg_tiles_items::sewers_16.tiles_ref(), // Use optional creation from item
+        bn::regular_bg_tiles_items::sewers_16_palette.colors_ref(),
+        bn::bpp_mode::BPP_4,
+        top_tile_cells.cells_ref(), bn::size(32, 32)).create_bg(0, 0);
+
+    bg_layer_2.set_priority(1); // Lower numbers are drawn behind higher numbers (3 is lowest priority)
+    bg_layer_2.set_visible(true);
+
+    bn::sprite_ptr warrior_sprite = bn::sprite_items::warrior3.create_sprite(0, -8);
+    bn::sprite_animate_action<2> action = bn::create_sprite_animate_action_once(
+        warrior_sprite, 16, bn::sprite_items::warrior3.tiles_item(), 0, 1);//, 2, 3, 4, 5, 6);
 
     warrior_sprite.set_horizontal_flip(true); // Flip the sprite horizontally
     warrior_sprite.set_bg_priority(2);        // Set sprite priority to be drawn above the background
 
     bn::camera_ptr camera = bn::camera_ptr::create(8, 8);
     bg_layer_0.set_camera(camera);
-    bg_layer_1.set_camera(camera); // Link camera to the background
+    bg_layer_1.set_camera(camera);
+    bg_layer_2.set_camera(camera);
 
     PaletteCycler palette_cycler(
         bg_layer_1.palette(), // Create palette from item
         2,                    // Start index for cycling (0-15)
-        2,                   // Number of colors to cycle (1-16)
-        15);                   // Delay frames between cycles
+        2,                    // Number of colors to cycle (1-16)
+        15);                  // Delay frames between cycles
 
     while (1)
     {
-        action.update();
+        if(!action.done())
+        {
+            action.update();
+        }
+        
+        
         bn::core::update();
         if (bn::keypad::left_pressed())
         {
             camera.set_x(camera.x() - 16);
             warrior_sprite.set_horizontal_flip(true);
+            action.reset();
         }
         else if (bn::keypad::right_pressed())
         {
             camera.set_x(camera.x() + 16);
             warrior_sprite.set_horizontal_flip(false);
+            action.reset();
         }
 
         if (bn::keypad::up_pressed())
         {
             camera.set_y(camera.y() - 16);
+            action.reset();
         }
         else if (bn::keypad::down_pressed())
         {
             camera.set_y(camera.y() + 16);
+            action.reset();
         }
-        
+
         bg_layer_1.set_top_left_y(bg_layer_1.top_left_y() + .01); // Move the water layer down
-        palette_cycler.update(); // Update the palette cycling
+        palette_cycler.update();                                  // Update the palette cycling
     }
 }
