@@ -7,6 +7,7 @@
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "sewers.tmx": {
             "scale": 7.190312499999999,
@@ -21,7 +22,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 127.94993263505583,
-                "y": 128.06119344604284
+                "y": 80.8866095875527
             }
         },
         "sewers3.tsx": {
@@ -34,7 +35,7 @@
         },
         "untitled..tmx": {
             "scale": 4.4939453125,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
                 "x": 127.94993263505583,
                 "y": 128.06119344604284
@@ -45,11 +46,11 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 127.94993263505583,
-                "y": 128.06119344604284
+                "y": 85.78208527098091
             }
         },
         "water0.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 11,
             "scaleInEditor": 16
         }
     },
@@ -62,21 +63,19 @@
     "map.tileWidth": 16,
     "map.width": 16,
     "openFiles": [
-        "sewers3.tsx",
         "untitled.tmx",
         "untitled..tmx",
-        "sewers2.tmx",
-        "sewers.tmx",
         "water0.tsx"
     ],
     "project": "untitled.tiled-project",
+    "property.type": "string",
     "recentFiles": [
-        "sewers3.tsx",
+        "untitled..tmx",
         "untitled.tmx",
         "water0.tsx",
-        "sewers.tmx",
         "sewers2.tmx",
-        "untitled..tmx",
+        "sewers3.tsx",
+        "sewers.tmx",
         "sewers_16.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
